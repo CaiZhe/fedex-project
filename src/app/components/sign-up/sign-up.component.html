@@ -1,0 +1,82 @@
+<div class="sign-up-container mx-auto">
+  <div class="card">
+    <div class="card-header">Sign up</div>
+    <div class="card-body">
+      <form [formGroup]="signUpForm" autocomplete="off" (ngSubmit)="onSubmit()">
+        <div class="input-group mb-2 mr-sm-2">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <i class="bi bi-person-circle"></i>
+            </div>
+          </div>
+          <input
+            formControlName="firstName"
+            type="text"
+            class="form-control"
+            id="firstName"
+            placeholder="First name"
+            [class.is-invalid]="firstName && firstName.invalid && firstName.touched"
+          />
+        </div>
+        <div class="input-group mb-2 mr-sm-2">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <i class="bi bi-people-fill"></i>
+            </div>
+          </div>
+          <input
+            formControlName="lastName"
+            type="text"
+            class="form-control"
+            id="lastName"
+            placeholder="Last name"
+            [class.is-invalid]="lastName && lastName.invalid && lastName.touched"
+          />
+        </div>
+        <div class="input-group mb-2 mr-sm-2">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <i class="bi bi-mailbox2"></i>
+            </div>
+          </div>
+          <input
+            formControlName="email"
+            type="email"
+            class="form-control"
+            id="email"
+            placeholder="Email"
+            [class.is-invalid]="email && email.invalid && email.touched"
+          />
+          <div *ngIf="password && password.invalid" class="invalid-feedback">
+            Please choose a valid email.
+          </div>
+        </div>
+        <div class="input-group mb-2 mr-sm-2">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <i class="bi bi-lock-fill"></i>
+            </div>
+          </div>
+          <input
+            formControlName="password"
+            type="password"
+            class="form-control"
+            id="password"
+            placeholder="Password"
+            [class.is-invalid]="password && password.invalid && password.touched"
+          />
+          <div *ngIf="password && password.errors" class="invalid-feedback">
+            The password that you have chosen does not follow these criteria:
+            <div *ngIf="password && password.errors.minlength">
+              - Contains at least 8 characters.
+            </div>   
+            <div *ngIf="password && password.errors.doesNotContainLowercaseAndUppercase">
+              - Contains at least one lowercase and one uppercase letter.
+            </div>              
+          </div>
+        </div>
+        <button class="btn btn-primary d-flex ml-auto">Register</button>
+      </form>
+    </div>
+  </div>
+</div>
