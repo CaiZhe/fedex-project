@@ -63,16 +63,19 @@
             class="form-control"
             id="password"
             placeholder="Password"
-            [class.is-invalid]="password && password.invalid && password.touched"
+            [class.is-invalid]="password!.invalid && password!.touched"
           />
-          <div *ngIf="password && password.errors" class="invalid-feedback">
+          <div *ngIf="(password!.errors)" class="invalid-feedback">
             The password that you have chosen does not follow these criteria:
-            <div *ngIf="password && password.errors.minlength">
+            <div *ngIf="password!.errors!.minlength">
               - Contains at least 8 characters.
             </div>   
-            <div *ngIf="password && password.errors.doesNotContainLowercaseAndUppercase">
+            <div *ngIf="password!.errors!.doesNotContainLowercaseAndUppercase">
               - Contains at least one lowercase and one uppercase letter.
-            </div>              
+            </div>          
+            <div *ngIf="password!.errors!.passwordContainsName">
+              - Password cannot contain first name or last name.
+            </div>      
           </div>
         </div>
         <button class="btn btn-primary d-flex ml-auto">Register</button>
