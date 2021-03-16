@@ -29,6 +29,7 @@ export class CustomValidators {
         formGroup.get('password')?.setErrors({ passwordContainsName: true });
         return null;
       } else {
+        formGroup.get('password')?.setErrors(null);
         return null;
       }
     };

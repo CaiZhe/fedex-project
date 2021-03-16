@@ -5,7 +5,12 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { CustomValidators } from 'src/app/custom-validators/custom-validators';
+import { Store } from '@ngrx/store';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CustomValidators } from 'src/app/shared/custom-validators';
+import { UserActionTypes } from 'src/app/state/user/user.actions';
+import * as UserSelectors from 'src/app/state/user/user.selectors';
 
 @Component({
   selector: 'app-sign-up',
@@ -13,6 +18,10 @@ import { CustomValidators } from 'src/app/custom-validators/custom-validators';
   styleUrls: ['./sign-up.component.sass'],
 })
 export class SignUpComponent implements OnInit {
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  hasSubmittedForm = false;
+  hasErrorOnSubmit = false;
+
   signUpForm = new FormGroup(
     {
       firstName: new FormControl('', [Validators.required]),
@@ -42,12 +51,39 @@ export class SignUpComponent implements OnInit {
     return this.signUpForm.get('password');
   }
 
-  constructor(private customValidators : CustomValidators) {}
+  constructor(
+    private customValidators: CustomValidators,
+    private store: Store
+  ) {}
 
   ngOnInit(): void {}
 
+  signupResult$: Observable<any> = this.store
+    .select(UserSelectors.getSignUpResult)
+    .pipe(
+      map((data) => {
+        this.isLoading$.next(false);
+
+        if (data.error) {
+          this.hasErrorOnSubmit = true;
+          return data.error;
+        }
+
+        this.hasErrorOnSubmit = false;
+        return { payload: true };
+      })
+    );
+
   onSubmit() {
-    console.log(this.password);
-    console.log(this.signUpForm);
+    if (this.isLoading$.value || this.signUpForm.status !== 'VALID') return;
+
+    this.isLoading$.next(true);
+    this.hasSubmittedForm = true;
+
+    // TODO: Encrypt password value
+    this.store.dispatch({
+      type: UserActionTypes.SIGN_UP_USER,
+      payload: { user: this.signUpForm.value },
+    });
   }
 }

@@ -2,84 +2,122 @@
   <div class="card">
     <div class="card-header">Sign up</div>
     <div class="card-body">
-      <form [formGroup]="signUpForm" autocomplete="off" (ngSubmit)="onSubmit()">
-        <div class="input-group mb-2 mr-sm-2">
-          <div class="input-group-prepend">
-            <div class="input-group-text">
-              <i class="bi bi-person-circle"></i>
+      <ng-container *ngIf="signupResult$ | async as result">
+        <ng-container
+          *ngIf="!hasSubmittedForm || (hasSubmittedForm && hasErrorOnSubmit)"
+        >
+          <p
+            class="invalid-feedback d-block"
+            *ngIf="hasSubmittedForm && hasErrorOnSubmit"
+          >
+            Something went wrong, please try again.
+          </p>
+          <form
+            [formGroup]="signUpForm"
+            autocomplete="off"
+            (ngSubmit)="onSubmit()"
+          >
+            <div class="input-group mb-2 mr-sm-2">
+              <div class="input-group-prepend">
+                <div class="input-group-text">
+                  <i class="bi bi-person-circle"></i>
+                </div>
+              </div>
+              <input
+                formControlName="firstName"
+                type="text"
+                class="form-control"
+                id="firstName"
+                placeholder="First name"
+                [class.is-invalid]="
+                  firstName && firstName.invalid && firstName.touched
+                "
+              />
             </div>
-          </div>
-          <input
-            formControlName="firstName"
-            type="text"
-            class="form-control"
-            id="firstName"
-            placeholder="First name"
-            [class.is-invalid]="firstName && firstName.invalid && firstName.touched"
-          />
-        </div>
-        <div class="input-group mb-2 mr-sm-2">
-          <div class="input-group-prepend">
-            <div class="input-group-text">
-              <i class="bi bi-people-fill"></i>
+            <div class="input-group mb-2 mr-sm-2">
+              <div class="input-group-prepend">
+                <div class="input-group-text">
+                  <i class="bi bi-people-fill"></i>
+                </div>
+              </div>
+              <input
+                formControlName="lastName"
+                type="text"
+                class="form-control"
+                id="lastName"
+                placeholder="Last name"
+                [class.is-invalid]="
+                  lastName && lastName.invalid && lastName.touched
+                "
+              />
             </div>
-          </div>
-          <input
-            formControlName="lastName"
-            type="text"
-            class="form-control"
-            id="lastName"
-            placeholder="Last name"
-            [class.is-invalid]="lastName && lastName.invalid && lastName.touched"
-          />
-        </div>
-        <div class="input-group mb-2 mr-sm-2">
-          <div class="input-group-prepend">
-            <div class="input-group-text">
-              <i class="bi bi-mailbox2"></i>
+            <div class="input-group mb-2 mr-sm-2">
+              <div class="input-group-prepend">
+                <div class="input-group-text">
+                  <i class="bi bi-mailbox2"></i>
+                </div>
+              </div>
+              <input
+                formControlName="email"
+                type="email"
+                class="form-control"
+                id="email"
+                placeholder="Email"
+                [class.is-invalid]="email && email.invalid && email.touched"
+              />
+              <div
+                *ngIf="password && password.invalid"
+                class="invalid-feedback"
+              >
+                Please choose a valid email.
+              </div>
             </div>
-          </div>
-          <input
-            formControlName="email"
-            type="email"
-            class="form-control"
-            id="email"
-            placeholder="Email"
-            [class.is-invalid]="email && email.invalid && email.touched"
-          />
-          <div *ngIf="password && password.invalid" class="invalid-feedback">
-            Please choose a valid email.
-          </div>
-        </div>
-        <div class="input-group mb-2 mr-sm-2">
-          <div class="input-group-prepend">
-            <div class="input-group-text">
-              <i class="bi bi-lock-fill"></i>
+            <div class="input-group mb-2 mr-sm-2">
+              <div class="input-group-prepend">
+                <div class="input-group-text">
+                  <i class="bi bi-lock-fill"></i>
+                </div>
+              </div>
+              <input
+                formControlName="password"
+                type="password"
+                class="form-control"
+                id="password"
+                placeholder="Password"
+                [class.is-invalid]="password!.invalid && password!.touched"
+              />
+              <div *ngIf="password!.errors" class="invalid-feedback">
+                The password that you have chosen does not follow these
+                criteria:
+                <div *ngIf="password!.errors!.minlength">
+                  - Contains at least 8 characters.
+                </div>
+                <div
+                  *ngIf="password!.errors!.doesNotContainLowercaseAndUppercase"
+                >
+                  - Contains at least one lowercase and one uppercase letter.
+                </div>
+                <div *ngIf="password!.errors!.passwordContainsName">
+                  - Password cannot contain first name or last name.
+                </div>
+              </div>
             </div>
-          </div>
-          <input
-            formControlName="password"
-            type="password"
-            class="form-control"
-            id="password"
-            placeholder="Password"
-            [class.is-invalid]="password!.invalid && password!.touched"
-          />
-          <div *ngIf="(password!.errors)" class="invalid-feedback">
-            The password that you have chosen does not follow these criteria:
-            <div *ngIf="password!.errors!.minlength">
-              - Contains at least 8 characters.
-            </div>   
-            <div *ngIf="password!.errors!.doesNotContainLowercaseAndUppercase">
-              - Contains at least one lowercase and one uppercase letter.
-            </div>          
-            <div *ngIf="password!.errors!.passwordContainsName">
-              - Password cannot contain first name or last name.
-            </div>      
-          </div>
-        </div>
-        <button class="btn btn-primary d-flex ml-auto">Register</button>
-      </form>
+            <button
+              class="btn btn-primary d-flex ml-auto"
+              [disabled]="isLoading$.value"
+            >
+              <span *ngIf="isLoading$.value" class="spinner-border"></span>
+              <span *ngIf="!isLoading$.value">Register</span>
+            </button>
+          </form>
+        </ng-container>
+
+        <ng-container *ngIf="hasSubmittedForm && !hasErrorOnSubmit">
+          <p>
+            You have successfully registered.
+          </p>
+        </ng-container>
+      </ng-container>
     </div>
   </div>
 </div>
